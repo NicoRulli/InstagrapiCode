@@ -1,0 +1,10 @@
+Using Python in order to automate Instagram posts for @OffshoreSlobs2
+
+1. Import all necessary packages in order to webscrape and control instagram. 
+2. Ensure code can log into instagram. 
+3. Figure out a way to download a popular fish related post
+4. Create an auto generated caption that gives credit to the original poster. 
+5. Save photo and upload it to instagram with that caption
+6. Upload post
+7. Delete all files saved
+8. Use crontab to run code daily. 
