@@ -62,14 +62,6 @@ def login_user():
 
 
 login_user()
-# runtime = time.time()
-# notYet = False
-
-# while notYet == False:
-#     if runtime < 15:
-#         notYet = False
-#     else: 
-#         notYet = True 
 
 start = time.time()
 print("Code is running and being timed. Please wait....")
@@ -172,36 +164,50 @@ create_user_id_dict(usernames)
 print('2')
 collect_like_count()
 print('3')
-MLPK = most_liked_PK()
+Mlpk = most_liked_PK()
 print('4')
-MLPK = prevent_repost(MLPK)
+Mlpk = prevent_repost(Mlpk)
 print('5')
 
-media_type = cl.media_info(MLPK).dict()['media_type']
-product_type = cl.media_info(MLPK).dict()['product_type']
+
+media_type = cl.media_info(Mlpk).dict()['media_type']
+
+product_type = cl.media_info(Mlpk).dict()['product_type']
+
+m = cl.media_info(Mlpk)
+
+url = m.video_url
 
 downloadPath = "/Users/Shared/InstagramAutomated/downloadedPosts"
 
-print(media_type)
+print("media type: " + str(media_type))
 print("Attempting to download...")
+p = ''
+files = os.listdir(downloadPath)
 
 if media_type == 1:                                  #picture
-    cl.photo_download(MLPK, downloadPath)
+    cl.photo_download(Mlpk, downloadPath)
+    
 
-if media_type == 2 and product_type == 'clips':      #Reel
-    cl.clip_download(MLPK, downloadPath)
+if media_type == 2 and product_type == 'clips':
+    p = cl.clip_download(Mlpk,downloadPath)          #Reel
 
 if media_type == 2 and product_type == 'feed':       #Video
-    cl.video_download(MLPK, downloadPath)
+    # cl.video_download(MLPK, downloadPath)
+    p = cl.video_download_by_url(m.video_url)
 
 if media_type == 2 and product_type == 'igtv':       #IGTV
-    cl.igtv_download(MLPK,downloadPath)
+    # cl.igtv_download(MLPK,downloadPath)
+    p = cl.igtv_download_by_url(m.video_url)
 
 if media_type == 8:                                  #Album
-    cl.album_download(MLPK, downloadPath)
+    # cl.album_download(MLPK, downloadPath)
+    p = downloadPath + '/' + files[1]
+    cl.album_download(Mlpk,downloadPath)
 
-poster = "@" + str(cl.media_user(MLPK).dict()['username'])
-location = cl.media_info(MLPK).dict()['location']
+
+poster = "@" + str(cl.media_user(Mlpk).dict()['username'])
+location = cl.media_info(Mlpk).dict()['location']
 
 if location != None:
     location = str(location['name'])
@@ -210,29 +216,32 @@ if location != None:
 else:
     caption = f"Check out this post by {poster}! \nTag your Friends and comment below! \n . \n . \n . \n . \n . \n . \n . \n . \n #billfish #bluemarlin #sailfish #centerconsole #simrad #furuno #sailfishing #fishing #gamefish #sportfishing #pelagicgirl #pelagicworldwide #fishingteam #tuna #bluefin #jigging #trolling #offshore #swordfish #panamafishing #spearfishing #bahamasfishing #catchandcook #saltlife #catchoftheday #pescasub #floridawildlife #floridakeys"
 
-files = os.listdir(downloadPath)
+
 print()
 print("Attempting to Upload...")
 
-uploadPath = downloadPath + "/" + files[1]
-
 if media_type == 1:                                  #picture
-    cl.photo_upload(uploadPath, caption)
+    p = downloadPath + '/' + files[1]
+    print('pic',p)
+    cl.photo_upload(p, caption)
 
 if media_type == 2 and product_type == 'clips':      #Reel
-    cl.clip_upload(uploadPath, caption)
+    print('****clip****', p)
+    cl.clip_upload(p, caption)
 
 if media_type == 2 and product_type == 'feed':       #Video 
-    cl.video_upload(uploadPath, caption)
+    print('video', p)
+    cl.video_upload(p, caption)
 
 if media_type == 2 and product_type == 'igtv':       #IGTV
-    cl.igtv_upload(uploadPath, caption)
+    print('igtv', p)
+    cl.igtv_upload(p, caption)
     
 if media_type == 8:                                  #Album
-    cl.album_upload(uploadPath, caption)
+    print('album',p)
+    cl.album_upload(p, caption)
 
-for _ in range(10):
-    os.remove(uploadPath)
+os.remove(p)
 
 print("File Deleted")
 
